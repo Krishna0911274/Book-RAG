@@ -1,9 +1,18 @@
 from app.loader import load_pdf
+from app.splitter import split_text
 
 pages = load_pdf("data/book.pdf")
 
-print("Total pages:", len(pages))
+all_text = ""
 
-for page in pages[:3]:
-    print("\n--- Page", page["page"], "---")
-    print(page["text"][:1000])
+for page in pages:
+    all_text += page["text"] + "\n"
+    
+chunks = split_text(all_text)
+
+print("Total pages:", len(pages))
+print("Total chunks:", len(chunks))
+
+for i, chunk in enumerate(chunks[:5],start=1):
+    print(f"\n--- Chunk {i} ---")
+    print(chunk)
