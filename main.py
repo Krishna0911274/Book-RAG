@@ -1,18 +1,20 @@
-from app.loader import load_pdf
-from app.splitter import split_text
+from app.embeddings import create_embedding
+from app.vectorstore import add_chunk, get_chunks
 
-pages = load_pdf("data/book.pdf")
 
-all_text = ""
+text = "Habits are the compound interest of self-improvement."
 
-for page in pages:
-    all_text += page["text"] + "\n"
-    
-chunks = split_text(all_text)
+embedding = create_embedding(text)
 
-print("Total pages:", len(pages))
-print("Total chunks:", len(chunks))
+add_chunk(
+    chunk_id="chunk_1",
+    text=text,
+    embedding=embedding,
+    page_number=1
+)
 
-for i, chunk in enumerate(chunks[:5],start=1):
-    print(f"\n--- Chunk {i} ---")
-    print(chunk)
+data = get_chunks()
+
+print("Stored IDs:", data["ids"])
+print("Stored documents:", data["documents"])
+print("Stored metadata:", data["metadatas"])
