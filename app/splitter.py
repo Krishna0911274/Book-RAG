@@ -1,16 +1,28 @@
-def split_text(text, chunk_size=500, chunk_overlap=50):
+def split_pages(pages, chunk_size=500, chunk_overlap=50):
     chunks = []
-    
-    start = 0
-    
-    while start < len(text):
-        end  = start + chunk_size
-        
-        chunk = text[start:end]
-        
-        if chunk.strip():
-            chunks.append(chunk.strip())
-            
-        start = end - chunk_overlap
-    
+
+    chunk_id = 1
+
+    for page in pages:
+        text = page["text"]
+        page_number = page["page"]
+
+        start = 0
+
+        while start < len(text):
+            end = start + chunk_size
+
+            chunk_text = text[start:end]
+
+            if chunk_text.strip():
+                chunks.append({
+                    "id": f"chunk_{chunk_id}",
+                    "text": chunk_text,
+                    "page": page_number
+                })
+
+                chunk_id += 1
+
+            start = end - chunk_overlap
+
     return chunks

@@ -1,16 +1,42 @@
 import chromadb
 
+
 client = chromadb.PersistentClient(path="./chroma_db")
 
-collection = client.get_or_create_collection("book_collection")
+collection = client.get_or_create_collection(
+    name="book_collection"
+)
 
-def add_chunk(chunk_id, text, embedding, page_number):
+
+def add_chunks(chunks, embeddings):
+
+    ids = []
+    documents = []
+    metadatas = []
+
+    for chunk, embedding in zip(chunks, embeddings):
+
+        ids.append(chunk["id"])
+
+        documents.append(chunk["text"])
+
+        metadatas.append({
+            "page": chunk["page"]
+        })
+
     collection.add(
-        ids = [chunk_id],
-        documents = [text],
-        embeddings = [embedding],
-        metadatas = [{"page_number": page_number}]
+        ids=ids,
+        documents=documents,
+        embeddings=embeddings,
+        metadatas=metadatas
     )
-    
-def get_chunks():
-    return collection.get()
+
+
+def search_chunks(query_embedding, top_k=3):
+
+    results = collection.query(
+        query_embeddings=[query_embedding],
+        n_results=top_k
+    )
+
+    return results

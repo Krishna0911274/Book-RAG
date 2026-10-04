@@ -1,20 +1,19 @@
-from app.embeddings import create_embedding
-from app.vectorstore import add_chunk, get_chunks
+from app.rag import ask_question
 
 
-text = "Habits are the compound interest of self-improvement."
+while True:
 
-embedding = create_embedding(text)
+    question = input("\nAsk a question about the book: ")
 
-add_chunk(
-    chunk_id="chunk_1",
-    text=text,
-    embedding=embedding,
-    page_number=1
-)
+    if question.lower() == "exit":
+        break
 
-data = get_chunks()
+    answer, results = ask_question(question)
 
-print("Stored IDs:", data["ids"])
-print("Stored documents:", data["documents"])
-print("Stored metadata:", data["metadatas"])
+    print("\nAnswer:")
+    print(answer)
+
+    print("\nSources:")
+
+    for metadata in results["metadatas"][0]:
+        print(f"Page {metadata['page']}")

@@ -1,22 +1,18 @@
-import os
+from sentence_transformers import SentenceTransformer
 
-from dotenv import load_dotenv
-from google import genai
-from google.genai import types
+model = SentenceTransformer('all-MiniLM-L6-v2')
 
-
-load_dotenv()
-
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
-
-
-def create_embedding(text):
-    response = client.models.embed_content(
-        model="gemini-embedding-2",
-        contents=text,
-        config=types.EmbedContentConfig(
-            output_dimensionality=768
-        )
+# For Book Embeddings
+def create_embeddings(texts):
+    embeddings = model.encode(
+        texts,
+        show_progress_bar = True,
     )
+    
+    return embeddings.tolist()
 
-    return response.embeddings[0].values
+# For User Question
+def create_embedding(text):
+    embedding = model.encode(text)
+    
+    return embedding.tolist()
